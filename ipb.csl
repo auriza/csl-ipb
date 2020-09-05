@@ -54,12 +54,11 @@
       <term name="in press">di dalam press</term>
       <term name="internet">internet</term>
       <term name="interview">wawancara</term>
-      <term name="letter">surat</term>
+      <term name="letter">komunikasi pribadi</term>
       <term name="no date">tahun tidak diketahui</term>
       <term name="no date" form="short">n.d.</term>
       <term name="online">daring</term>
       <term name="presented at">dipresentasikan pada</term>
-      <term name="personal communication">komunikasi pribadi</term>
       <term name="reference">
         <single>referensi</single>
         <multiple>referensi</multiple>
@@ -340,7 +339,7 @@
       <text variable="note" prefix="[" suffix="]"/>
       <choose>
         <if type="personal_communication" match="any">
-          <text term="personal communication" prefix="[" suffix="]" />
+          <text term="letter" prefix="[" suffix="]" />
         </if>
       </choose>
     </group>

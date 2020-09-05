@@ -2,18 +2,18 @@
 
 Download CSL: [ipb.link/csl](ipb.csl)
 
-![](csl.png)
+![CSL dalam ekosistem penulisan pustaka](csl.png)
 
-## Petunjuk Penulisan Metadata Pustaka
+## *Best practice* penulisan metadata pustaka
 
 | Komponen              | Penulisan                                                                |
 |:----------------------|:-------------------------------------------------------------------------|
-| Judul buku            | title case                                                               |
-| Nama jurnal/prosiding | title case                                                               |
-| Judul artikel         | sentence case                                                            |
-| Penulis tidak ada     | pada atribut “Short Title”: kata pertama dari judul                      |
+| Judul buku            | *title case*                                                             |
+| Nama jurnal/prosiding | *title case*                                                             |
+| Judul artikel         | *sentence case*                                                          |
+| Penulis tidak ada     | pada atribut `Short Title`: kata pertama dari judul                      |
 | Penulis organisasi    | langsung singkatannya saja (belum didukung)                              |
-| Jenis artikel         | pada atribut “Extra” (Zotero) atau “note” (BibTeX): editorial, ulasan, … |
+| Jenis artikel         | pada atribut `Extra` (Zotero) atau `note` (BibTeX): editorial, ulasan, … |
 
 
 
