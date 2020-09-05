@@ -18,3 +18,5 @@ Download CSL: [ipb.csl](ipb.csl)
 ## Contoh Keluaran
 
 Hasil uji coba: [HTML](https://auriza.github.io/csl-ipb/test/ppki4.html), [PDF](test/ppki4.pdf)
+
+Contoh paper: [HTML](https://auriza.github.io/csl-ipb/tesis/paper.html), [PDF](tesis/paper.pdf)
