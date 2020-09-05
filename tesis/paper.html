@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Auriza Rahmad Akbar" />
+  <meta name="dcterms.date" content="2014-01-01" />
+  <title>Perbandingan Skema Partisi Data Algoritme Pairwise Alignment Paralel pada Arsitektur Shared Memory</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style>
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="/home/auriza/water.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  
+  
+  
+  
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Perbandingan Skema Partisi Data Algoritme <em>Pairwise Alignment</em> Paralel pada Arsitektur <em>Shared Memory</em></h1>
+<p class="author">Auriza Rahmad Akbar</p>
+<p class="date">2014</p>
+</header>
+<!-- Perbandingan efisiensi paralel skema partisi data algoritme Pairwise Alignment pada sistem multi-core-->
+<!-- write paper to communicate your ideas -->
+
+<h1 id="pendahuluan">Pendahuluan</h1>
+<p>Algoritme <em>pairwise alignment</em> (PA) dipakai dalam bioinformatika untuk menjajarkan sepasang sekuens DNA. Hasil penjajaran digunakan untuk menentukan kemiripan antara keduanya <span class="citation" data-cites="cohen2004">(Cohen 2004)</span>. PA menggunakan teknik pemrograman dinamis untuk memperoleh hasil penjajaran optimal dengan kompleksitas <span class="math inline">\(O(L^2)\)</span>, dengan <span class="math inline">\(L\)</span> sebagai panjang sekuens <span class="citation" data-cites="waterman1976">(Waterman <em>et al.</em> 1976)</span>. PA merupakan penyusun dasar algoritme <em>multiple sequence alignment</em> (MSA) yang digunakan untuk menjajarkan lebih dari dua sekuens sekaligus. Contoh aplikasi yang menggunakan algoritme ini ialah <code>clustalw</code> <span class="citation" data-cites="thompson1994">(Thompson <em>et al.</em> 1994)</span>, <code>t-coffee</code> <span class="citation" data-cites="notredame2000">(Notredame <em>et al.</em> 2000)</span>, <code>mafft</code> <span class="citation" data-cites="katoh2002">(Katoh <em>et al.</em> 2002)</span>, dan <code>muscle</code> <span class="citation" data-cites="edgar2004">(Edgar 2004)</span>. Selain itu, PA juga dipakai untuk pencarian sekuens pada <em>database</em>, untuk menemukan sekuens-sekuens yang paling mirip dengan sekuens yang dicari <span class="citation" data-cites="rognes2000">(Rognes dan Seeberg 2000)</span>.</p>
+<p>Teknologi <em>next-generation DNA sequencer</em> terkini menghasilkan data sekuens yang banyak, hingga 600 Gb sekali jalan <span class="citation" data-cites="liu2012">(Liu <em>et al.</em> 2012)</span>. Data yang besar memerlukan pemrosesan yang cepat, sehingga algoritme penjajaran perlu diparalelkan untuk mempercepat proses analisis. Paralelisasi MSA telah banyak dilakukan, seperti pada <code>praline</code> <span class="citation" data-cites="kleinjung2002">(Kleinjung <em>et al.</em> 2002)</span>, <code>clustalw-mpi</code> <span class="citation" data-cites="li2003">(Li 2003)</span>, <code>mt-clustalw</code> <span class="citation" data-cites="chaichoompu2006">(Chaichoompu <em>et al.</em> 2006)</span>, dan <code>mafft</code> <span class="citation" data-cites="katoh2010">(Katoh dan Toh 2010)</span>. Paralelisasi PA juga telah dilakukan meskipun tidak sebanyak MSA, seperti <code>paralign</code> <span class="citation" data-cites="rognes2001">(Rognes 2001)</span> dan <code>cudasw</code> <span class="citation" data-cites="liu2013">(Liu <em>et al.</em> 2013)</span> .</p>
+<p>Terdapat dua jenis algoritme PA, yaitu penjajaran global <span class="citation" data-cites="needleman1970">(Needleman dan Wunsch 1970)</span> dan penjajaran lokal <span class="citation" data-cites="smith1981">(Smith dan Waterman 1981)</span>. Teknik pemrograman dinamis pada PA menyebabkan adanya dependensi data, sehingga metode partisi data sangat berpengaruh pada kinerja algoritme. Metode partisi yang telah diterapkan untuk paralelisasi PA antara lain: <em>columnwise</em> <span class="citation" data-cites="hughey1996">(Hughey 1996)</span>, diagonal <span class="citation" data-cites="rognes2001">(Rognes 2001)</span>, <em>rowwise</em> <span class="citation" data-cites="martins2001">(Martins <em>et al.</em> 2001)</span>, <em>blocked columnwise</em> <span class="citation" data-cites="liu2003">(Liu dan Schmidt 2003)</span>, dan <em>blocked</em> anti-diagonal <span class="citation" data-cites="li2012">(Li <em>et al.</em> 2012)</span>. Namun demikian, belum diketahui metode partisi mana yang memberikan kinerja terbaik pada arsitektur <em>shared memory</em>.</p>
+<p>Tujuan penelitian ini adalah memparalelkan algoritme PA pada arsitektur <em>shared memory</em> menggunakan OpenMP dan membandingkan skema partisi data yang memberikan kinerja terbaik.</p>
+<h1 id="metode-penelitian">Metode Penelitian</h1>
+<p>Algoritme PA diimplementasikan terlebih dahulu secara sekuensial dengan pendekatan penjajaran global. Keluaran program dibandingkan dengan keluaran <code>clustalw</code> untuk verifikasi kebenaran algoritme ini. Proses verifikasi menggunakan masukan data dua sekuens Hemoglobin <span class="math inline">\(\alpha\)</span> dan <span class="math inline">\(\beta\)</span> kuda (<em>Equus caballus</em>).</p>
+<p>Setelah verifikasi berhasil, yaitu hasil penjajaran sudah benar, barulah dikembangkan algoritme PA secara paralel. Kinerja algoritme diuji dengan membangkitkan data sekuens DNA dengan panjang yang bervariasi, yaitu 1000, 2000, 4000, 8000, dan 16000 pasang basa.</p>
+<p>Paralelisasi diimplementasikan dengan pustaka OpenMP, yang jauh lebih mudah daripada jika menggunakan instruksi prosesor MMX/SSE <span class="citation" data-cites="rognes2001">(Rognes 2001)</span> maupun pustaka Pthreads <span class="citation" data-cites="chaichoompu2006 katoh2010">(Chaichoompu <em>et al.</em> 2006; Katoh dan Toh 2010)</span>. OpenMP adalah pustaka untuk memparalelkan program secara <em>multithreading</em> pada arsitektur <em>shared memory</em> <span class="citation" data-cites="dagum1998">(Dagum dan Menon 1998)</span>. Hasil penjajaran program paralel dibandingkan dengan program sekuensial, keluarannya harus sama untuk menjamin konsistensi sekuensial <span class="citation" data-cites="lamport1979">(Lamport 1979)</span>.</p>
+<p>Terdapat tiga skema partisi data program paralel yang diuji, yaitu skema <em>blocked columnwise</em>, <em>rowwise</em>, dan anti diagonal. Hasil penjajaran dari ketiga skema tersebut juga diuji untuk mengetahui validasi keluaran. Waktu eksekusi program paralel dari ketiga skema tersebut dibandingkan untuk menentukan skema partisi yang terbaik.</p>
+<p>Penghitungan waktu eksekusi dilakukan pada prosesor Intel Core i5 yang memiliki 4 <em>core</em>. Waktu eksekusi didapat menggunakan fungsi <code>omp_get_wtime()</code> dari pustaka OpenMP. Waktu yang dihitung adalah waktu untuk menghitung matriks penjajaran. Penghitungan waktunya diulang sebanyak 10 kali untuk setiap panjang sekuens dan skema partisi yang berbeda. Waktu yang didapat kemudian diambil rataannya sebagai hasil akhir waktu eksekusi.</p>
+<h1 id="hasil-dan-pembahasan">Hasil dan Pembahasan</h1>
+<h2 id="implementasi-algoritme-pairwise-alignment-sekuensial">Implementasi algoritme <em>pairwise alignment</em> sekuensial</h2>
+<p>Implementasi algoritme PA dikembangkan dari algoritme <em>longest common subsequence</em> (LCS) <span class="citation" data-cites="cormen2009">(Cormen <em>et al.</em> 2009)</span> dengan beberapa modifikasi. LCS adalah algoritme penjajaran global yang lebih dikenal dengan sebutan algoritme Needleman–Wunsch <span class="citation" data-cites="needleman1970">(Needleman dan Wunsch 1970)</span>. Skor penjajaran diatur sehingga jika penjajaran <em>match</em> maka skor bertambah 1, sebaliknya jika <em>mismatch</em> atau <em>gap</em> maka skor berkurang 1. Untuk baris dan kolom ke–0, inisialisasi nilai awal pada matriks penjajaran diatur menurun, yaitu <span class="math inline">\(-1\)</span> dikali jaraknya dari titik awal (pojok kiri atas). Berikut adalah implementasi algoritme PA dalam bahasa pemrograman C untuk menjajarkan sekuens <span class="math inline">\(X\)</span> dan <span class="math inline">\(Y\)</span>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><a class="sourceLine" id="cb1-1" title="1"><span class="pp">#define MATCH       +1</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="pp">#define MISMATCH    -1</span></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="pp">#define GAP         -1</span></a>
+<a class="sourceLine" id="cb1-4" title="4"></a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="co">/* initialization */</span></a>
+<a class="sourceLine" id="cb1-6" title="6">C[m+<span class="dv">1</span>][n+<span class="dv">1</span>] = {{EMPTY}};                        <span class="co">// score matrix</span></a>
+<a class="sourceLine" id="cb1-7" title="7"><span class="cf">for</span> (i = <span class="dv">0</span>; i &lt;= m; i++) C[i][<span class="dv">0</span>] = i*GAP;       <span class="co">// 0th col setup</span></a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="cf">for</span> (j = <span class="dv">0</span>; j &lt;= n; j++) C[<span class="dv">0</span>][j] = j*GAP;       <span class="co">// 0th row setup</span></a>
+<a class="sourceLine" id="cb1-9" title="9"></a>
+<a class="sourceLine" id="cb1-10" title="10">time = omp_get_wtime();                         <span class="co">// start time</span></a>
+<a class="sourceLine" id="cb1-11" title="11"></a>
+<a class="sourceLine" id="cb1-12" title="12"><span class="co">/* alignment score computation  */</span></a>
+<a class="sourceLine" id="cb1-13" title="13"><span class="cf">for</span> (i = <span class="dv">1</span>; i &lt;= m; i++) {</a>
+<a class="sourceLine" id="cb1-14" title="14">    <span class="cf">for</span> (j = <span class="dv">1</span>; j &lt;= n; j++) {</a>
+<a class="sourceLine" id="cb1-15" title="15"></a>
+<a class="sourceLine" id="cb1-16" title="16">        <span class="co">/* calculate three possible directions  */</span></a>
+<a class="sourceLine" id="cb1-17" title="17">        diag = C[i-<span class="dv">1</span>][j-<span class="dv">1</span>] + ((X[i] == Y[j])? MATCH : MISMATCH);</a>
+<a class="sourceLine" id="cb1-18" title="18">        up   = C[i-<span class="dv">1</span>][ j ] + GAP;</a>
+<a class="sourceLine" id="cb1-19" title="19">        left = C[ i ][j-<span class="dv">1</span>] + GAP;</a>
+<a class="sourceLine" id="cb1-20" title="20"></a>
+<a class="sourceLine" id="cb1-21" title="21">        <span class="co">/* choose one with the biggest score    */</span></a>
+<a class="sourceLine" id="cb1-22" title="22">        <span class="cf">if</span> (diag &gt;= up &amp;&amp; diag &gt;= left)  C[i][j] = diag;</a>
+<a class="sourceLine" id="cb1-23" title="23">                   <span class="cf">else</span> <span class="cf">if</span> (up &gt;= left)  C[i][j] = up;</a>
+<a class="sourceLine" id="cb1-24" title="24">                                   <span class="cf">else</span>  C[i][j] = left;</a>
+<a class="sourceLine" id="cb1-25" title="25">    }</a>
+<a class="sourceLine" id="cb1-26" title="26">}</a>
+<a class="sourceLine" id="cb1-27" title="27"></a>
+<a class="sourceLine" id="cb1-28" title="28">time = omp_get_wtime() - time;                  <span class="co">// end time</span></a></code></pre></div>
+<p>Contoh perhitungan matriks penjajaran global dapat dilihat pada Gambar , yang menjajarkan sekuens <code>AGTCA</code> dan <code>ATGA</code> dengan hasil skor 1 (nilai sel pada pojok kanan bawah) dan hasil penjajaran sebagai berikut.</p>
+<figure>
+<img src="needleman-wunsch.png" alt="Contoh penjajaran global untuk sekuens AGTCA dengan ATGA." /><figcaption>Contoh penjajaran global untuk sekuens <code>AGTCA</code> dengan <code>ATGA</code>.</figcaption>
+</figure>
+<pre><code>                               AGTCA
+                               A-TGA</code></pre>
+<h2 id="verifikasi-hasil-penjajaran">Verifikasi hasil penjajaran</h2>
+<p>Hasil penjajaran sekuens dibandingkan dengan keluaran dari program <code>clustalw</code> dengan opsi <code>-dnamatrix=clustalw -gapopen=1 -gapext=1 -endgaps</code>. Skor penjajaran dihitung dengan aturan jika penjajaran <em>match</em> maka skor bertambah 1, namun jika <em>mismatch</em> skor berkurang 1. Secara umum algoritme PA yang dikembangkan sudah benar, kedua sekuens berhasil dijajarkan.</p>
+<p>Namun setelah diamati, program <code>clustalw</code> menghasilkan penjajaran dengan jumlah <em>gap</em> lebih sedikit dan posisinya lebih mengumpul. Hal ini dikarenakan program <code>clustalw</code> memiliki lebih banyak opsi dan fitur, serta perbaikan bertahun-tahun untuk menghasilkan penjajaran yang akurat. Berikut <!-- dan Gambar \ref{compare} --> adalah perbandingan keluaran kedua program penjajaran pada sekuens Hemoglobin <span class="math inline">\(\alpha\)</span> dan <span class="math inline">\(\beta\)</span> kuda (<em>Equus caballus</em>).</p>
+<pre><code>&gt; clustalw
+HbA   ATCATCC-TAACAGAGTTTACAATGACAACCGGCTGTTGTAAACAATGGCTAT..
+HbB   -TCGTTCGTCTCACTACCTCCAGTTCGCTGTACCTCTATTGAGTAGTGG-TAC..
+
+&gt; PA sekuensial
+HbA   ATC-ATC--CT-A--A-C-AGAGTTTACAATGACAACCGGCTGTTGTAAACAATGGCTAT..
+HbB   -TCGTTCGTCTCACTACCTCCAG-TT-CGCTG--TACC-TCTATTG--AGTAGTGG-TAC..</code></pre>
+<p>Berdasarkan hasil penjajaran di atas, algoritme PA sekuensial sederhana telah berhasil diimplementasikan. Hasil penghitungan waktu eksekusi dapat dilihat pada Tabel . Selanjutnya, algoritme ini akan menjadi dasar untuk diparalelkan.</p>
+<table>
+<caption>Waktu eksekusi algoritme PA sekuensial pada Intel Core i5.</caption>
+<thead>
+<tr class="header">
+<th>Panjang sekuens (bp)</th>
+<th style="text-align: center;">Waktu (s)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1000</td>
+<td style="text-align: center;">0.017</td>
+</tr>
+<tr class="even">
+<td>2000</td>
+<td style="text-align: center;">0.052</td>
+</tr>
+<tr class="odd">
+<td>4000</td>
+<td style="text-align: center;">0.203</td>
+</tr>
+<tr class="even">
+<td>8000</td>
+<td style="text-align: center;">0.815</td>
+</tr>
+<tr class="odd">
+<td>16000</td>
+<td style="text-align: center;">3.250</td>
+</tr>
+</tbody>
+</table>
+<h2 id="skema-partisi-blocked-columnwise">Skema partisi <em>blocked columnwise</em></h2>
+<p>Skema partisi ini membagi matriks penjajaran per blok kolom <span class="citation" data-cites="liu2003">(Liu dan Schmidt 2003)</span>. <em>Thread</em> ke-<span class="math inline">\(i\)</span> (<span class="math inline">\(t_i\)</span>) mendapat bagian satu blok dari kolom ke-<span class="math inline">\((\lceil \frac {i \cdot n} t \rceil + 1)\)</span> sampai <span class="math inline">\((\lceil \frac {(i+1)\, n} t \rceil)\)</span>, dengan <span class="math inline">\(n\)</span> banyaknya kolom dan <span class="math inline">\(t\)</span> banyaknya <em>thread</em>. Misalnya <span class="math inline">\(n\)</span> = 9 dan <span class="math inline">\(t\)</span> = 3, maka <span class="math inline">\(t_0\)</span> mendapat bagian blok kolom ke-1–3. Ilustrasi skema ini dapat dilihat pada Gambar .</p>
+<figure>
+<img src="block-columnwise.png" alt="Skema penjajaran blocked columnwise." /><figcaption>Skema penjajaran <em>blocked columnwise</em>.</figcaption>
+</figure>
+<p>Skema <em>blocked columnwise</em> membutuhkan waktu komunikasi—atau dalam <em>shared memory</em> ialah dependensi data antar-<em>thread</em>—yang sedikit. Sel pada kolom paling depan (tanda <em>) mengecek apakah sel di sebelah kirinya sudah terisi oleh </em>thread* lain atau belum. Jika salah satu <em>thread</em> kerjanya lebih lambat, maka <em>thread</em> berikutnya harus menunggu sampai <em>thread</em> pertama menyelesaikan satu baris bagiannya.</p>
+<p>Namun, pemakaian direktif <code>for</code> pada OpenMP walaupun sederhana tetapi kurang fleksibel, sehingga pengecekan masih dilakukan untuk tiap sel. Hal ini menyebabkan penurunan kinerja karena algoritme paralel menjadi kurang efisien. Berikut baris kode yang telah ditambahkan direktif OpenMP untuk memparalelkan algoritme PA dengan skema ini.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><a class="sourceLine" id="cb4-1" title="1"><span class="pp">#pragma omp parallel private(i,diag,up,left)</span></a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="cf">for</span> (i = <span class="dv">1</span>; i &lt;= m; i++) {</a>
+<a class="sourceLine" id="cb4-3" title="3"></a>
+<a class="sourceLine" id="cb4-4" title="4">    <span class="pp">#pragma omp for schedule(static) nowait</span></a>
+<a class="sourceLine" id="cb4-5" title="5">    <span class="cf">for</span> (j = <span class="dv">1</span>; j &lt;= n; j++) {</a>
+<a class="sourceLine" id="cb4-6" title="6"></a>
+<a class="sourceLine" id="cb4-7" title="7">        <span class="co">/* wait until its left cell is filled   */</span></a>
+<a class="sourceLine" id="cb4-8" title="8">        <span class="cf">while</span> (C[i][j-<span class="dv">1</span>] == EMPTY);</a>
+<a class="sourceLine" id="cb4-9" title="9"></a>
+<a class="sourceLine" id="cb4-10" title="10">        <span class="co">/* calculate three possible directions,</span></a>
+<a class="sourceLine" id="cb4-11" title="11"><span class="co">           choose one with the biggest score    */</span></a>
+<a class="sourceLine" id="cb4-12" title="12">        ...</a>
+<a class="sourceLine" id="cb4-13" title="13">    }</a>
+<a class="sourceLine" id="cb4-14" title="14">}</a></code></pre></div>
+<p>Hasil penghitungan waktu eksekusi untuk skema <em>blocked columnwise</em> menunjukkan <em>speedup</em> sampai 3 kali lipat dibanding algoritme sekuensial. Nilai <em>speedup</em> masih belum optimal pada sekuens yang pendek. Seiring dengan bertambahnya panjang sekuens nilai <em>speedup</em> stabil pada angka 3.00. Efisiensi (nilai <em>speedup</em> dibanding jumlah <em>thread</em>) yang didapat sebesar 75% untuk jumlah <em>thread</em> 4. Hasil lengkapnya dapat dilihat pada Tabel .</p>
+<table>
+<caption>Waktu eksekusi PA paralel skema <em>blocked columnwise</em> dengan 4 <em>thread</em>.</caption>
+<thead>
+<tr class="header">
+<th>Panjang sekuens (bp)</th>
+<th style="text-align: center;">Waktu sekuensial (s)</th>
+<th style="text-align: center;">Waktu paralel (s)</th>
+<th style="text-align: center;"><em>Speedup</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1000</td>
+<td style="text-align: center;">0.017</td>
+<td style="text-align: center;">0.007</td>
+<td style="text-align: center;">2.31</td>
+</tr>
+<tr class="even">
+<td>2000</td>
+<td style="text-align: center;">0.052</td>
+<td style="text-align: center;">0.019</td>
+<td style="text-align: center;">2.75</td>
+</tr>
+<tr class="odd">
+<td>4000</td>
+<td style="text-align: center;">0.203</td>
+<td style="text-align: center;">0.068</td>
+<td style="text-align: center;">2.99</td>
+</tr>
+<tr class="even">
+<td>8000</td>
+<td style="text-align: center;">0.815</td>
+<td style="text-align: center;">0.273</td>
+<td style="text-align: center;">2.98</td>
+</tr>
+<tr class="odd">
+<td>16000</td>
+<td style="text-align: center;">3.250</td>
+<td style="text-align: center;">1.084</td>
+<td style="text-align: center;">3.00</td>
+</tr>
+</tbody>
+</table>
+<h2 id="skema-partisi-rowwise">Skema partisi <em>rowwise</em></h2>
+<p>Skema partisi <em>rowwise</em> membagi matriks penjajaran per baris <span class="citation" data-cites="martins2001">(Martins <em>et al.</em> 2001)</span>. <em>Thread</em> ke-<span class="math inline">\(i\)</span> (<span class="math inline">\(t_i\)</span>) mendapatkan bagian baris ke-<span class="math inline">\((i + xt + 1)\)</span>, dengan <span class="math inline">\(x = 0, 1, 2, ..., (\lceil\frac{m}{t}\rceil - 1)\)</span>, <span class="math inline">\(m\)</span> banyaknya baris, dan <span class="math inline">\(t\)</span> jumlah <em>thread</em>. Misalnya banyaknya baris <span class="math inline">\(m\)</span> = 12 dan jumlah <em>thread</em> <span class="math inline">\(t\)</span> = 3, maka <span class="math inline">\(t_0\)</span> mendapat bagian baris ke-1, 4, 7, dan 10. Ilustrasi skema ini dapat dilihat pada Gambar .</p>
+<figure>
+<img src="rowwise.png" alt="Skema penjajaran rowwise." /><figcaption>Skema penjajaran <em>rowwise</em>.</figcaption>
+</figure>
+<p>Skema <em>rowwise</em> memiliki dependensi data antar-<em>thread</em> (komunikasi) yang tinggi, yaitu pada setiap iterasi. Setiap sel harus mengecek sel di atasnya sudah terisi oleh <em>thread</em> lain atau belum. Meskipun demikian, hal tersebut tidak menurunkan kinerja karena implementasi dilakukan pada arsitektur <em>shared memory</em>. Berikut baris kode yang telah ditambahkan direktif OpenMP untuk memparalelkan algoritme PA dengan skema ini.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><a class="sourceLine" id="cb5-1" title="1"><span class="pp">#pragma omp parallel for schedule(static,1) private(j,diag,up,left)</span></a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="cf">for</span> (i = <span class="dv">1</span>; i &lt;= m; i++) {</a>
+<a class="sourceLine" id="cb5-3" title="3">    <span class="cf">for</span> (j = <span class="dv">1</span>; j &lt;= n; j++) {</a>
+<a class="sourceLine" id="cb5-4" title="4"></a>
+<a class="sourceLine" id="cb5-5" title="5">        <span class="co">/* wait until its upper cell is filled   */</span></a>
+<a class="sourceLine" id="cb5-6" title="6">        <span class="cf">while</span> (C[i-<span class="dv">1</span>][j] == EMPTY);</a>
+<a class="sourceLine" id="cb5-7" title="7"></a>
+<a class="sourceLine" id="cb5-8" title="8">        <span class="co">/* calculate three possible directions,</span></a>
+<a class="sourceLine" id="cb5-9" title="9"><span class="co">           choose one with the biggest score    */</span></a>
+<a class="sourceLine" id="cb5-10" title="10">        ...</a>
+<a class="sourceLine" id="cb5-11" title="11">    }</a>
+<a class="sourceLine" id="cb5-12" title="12">}</a></code></pre></div>
+<p>Di luar dugaan, hasil penghitungan waktu eksekusi untuk skema <em>rowwise</em> menunjukkan <em>speedup</em> sampai 3.18 kali lipat, melebihi <em>speedup</em> skema <em>blocked columnwise</em>. Nilai <em>speedup</em> masih terlihat belum optimal pada sekuens yang pendek. Seiring dengan bertambahnya panjang sekuens nilai <em>speedup</em> mencapai angka 3.18. Efisiensi yang didapat dari penggunaan skema <em>rowwise</em> ini sebesar 80% untuk jumlah <em>thread</em> 4. Hasil lengkapnya dapat dilihat pada Tabel .</p>
+<table>
+<caption>Waktu eksekusi PA paralel skema <em>rowwise</em> dengan 4 <em>thread</em>.</caption>
+<thead>
+<tr class="header">
+<th>Panjang sekuens (bp)</th>
+<th style="text-align: center;">Waktu sekuensial (s)</th>
+<th style="text-align: center;">Waktu paralel (s)</th>
+<th style="text-align: center;"><em>Speedup</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1000</td>
+<td style="text-align: center;">0.017</td>
+<td style="text-align: center;">0.008</td>
+<td style="text-align: center;">2.20</td>
+</tr>
+<tr class="even">
+<td>2000</td>
+<td style="text-align: center;">0.052</td>
+<td style="text-align: center;">0.018</td>
+<td style="text-align: center;">2.94</td>
+</tr>
+<tr class="odd">
+<td>4000</td>
+<td style="text-align: center;">0.203</td>
+<td style="text-align: center;">0.065</td>
+<td style="text-align: center;">3.15</td>
+</tr>
+<tr class="even">
+<td>8000</td>
+<td style="text-align: center;">0.815</td>
+<td style="text-align: center;">0.258</td>
+<td style="text-align: center;">3.16</td>
+</tr>
+<tr class="odd">
+<td>16000</td>
+<td style="text-align: center;">3.250</td>
+<td style="text-align: center;">1.022</td>
+<td style="text-align: center;">3.18</td>
+</tr>
+</tbody>
+</table>
+<h2 id="skema-partisi-antidiagonal">Skema partisi antidiagonal</h2>
+<p>Skema partisi antidiagonal membagi matriks penjajaran per antidiagonal, melintang dari kiri-bawah ke kanan-atas <span class="citation" data-cites="li2012">(Li <em>et al.</em> 2012)</span>. <em>Thread</em> ke-<span class="math inline">\(i\)</span> (<span class="math inline">\(t_i\)</span>) mendapatkan bagian antidiagonal ke-<span class="math inline">\((i + xt + 1)\)</span>, dengan <span class="math inline">\(x = 0, 1, 2, ..., (\lceil \frac{m+n-1}{t} \rceil -1)\)</span>, <span class="math inline">\(m\)</span> banyaknya baris, <span class="math inline">\(n\)</span> banyaknya kolom, dan <span class="math inline">\(t\)</span> jumlah <em>thread</em>. Misalnya banyak baris <span class="math inline">\(m\)</span> = 6, banyak kolom <span class="math inline">\(n\)</span> = 10, dan jumlah <em>thread</em> <span class="math inline">\(t\)</span> = 3, maka <span class="math inline">\(t_0\)</span> mendapat bagian antidiagonal ke-1, 4, 7, 10, dan 13. Ilustrasi skema ini dapat dilihat pada Gambar .</p>
+<figure>
+<img src="antidiagonal.png" alt="Skema penjajaran antidiagonal." /><figcaption>Skema penjajaran antidiagonal.</figcaption>
+</figure>
+<p>Skema antidiagonal memiliki dependensi data antar-<em>thread</em> (komunikasi) yang tinggi, yaitu pada setiap iterasi. Setiap sel harus mengecek apakah sel di kiri dan atasnya sudah terisi oleh <em>thread</em> lain atau belum. Berbeda dengan skema <em>rowwise</em>, pola akses memori yang nonlinier membuat kinerja skema antidiagonal lebih buruk. Berikut baris kode yang telah ditambahkan direktif OpenMP untuk memparalelkan algoritme PA dengan skema ini.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><a class="sourceLine" id="cb6-1" title="1"><span class="pp">#pragma omp parallel for schedule(static,1) private(i,j,diag,up,left)</span></a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="cf">for</span> (k = <span class="dv">1</span>; k &lt;= m+n; k++) {</a>
+<a class="sourceLine" id="cb6-3" title="3"></a>
+<a class="sourceLine" id="cb6-4" title="4">    <span class="co">/* upper diagonal   */</span></a>
+<a class="sourceLine" id="cb6-5" title="5">    <span class="cf">if</span> (k &lt; m)</a>
+<a class="sourceLine" id="cb6-6" title="6">        <span class="cf">for</span> (i = k, j = <span class="dv">1</span>; i &gt; <span class="dv">0</span> &amp;&amp; j &lt;= n; i--, j++) {</a>
+<a class="sourceLine" id="cb6-7" title="7"></a>
+<a class="sourceLine" id="cb6-8" title="8">            <span class="co">/* wait until its left and upper cell is filled   */</span></a>
+<a class="sourceLine" id="cb6-9" title="9">            <span class="cf">while</span> (C[i][j-<span class="dv">1</span>] == EMPTY || C[i-<span class="dv">1</span>][j] == EMPTY);</a>
+<a class="sourceLine" id="cb6-10" title="10"></a>
+<a class="sourceLine" id="cb6-11" title="11">            <span class="co">/* calculate three possible directions,</span></a>
+<a class="sourceLine" id="cb6-12" title="12"><span class="co">               choose one with the biggest score    */</span></a>
+<a class="sourceLine" id="cb6-13" title="13">            ...</a>
+<a class="sourceLine" id="cb6-14" title="14">        }</a>
+<a class="sourceLine" id="cb6-15" title="15"></a>
+<a class="sourceLine" id="cb6-16" title="16">    <span class="co">/* lower diagonal   */</span></a>
+<a class="sourceLine" id="cb6-17" title="17">    <span class="cf">else</span> <span class="cf">if</span> (k &gt; m)</a>
+<a class="sourceLine" id="cb6-18" title="18">        <span class="cf">for</span> (i = m, j = k-m; i &gt; <span class="dv">0</span> &amp;&amp; j &lt;= n; i--, j++) {</a>
+<a class="sourceLine" id="cb6-19" title="19"></a>
+<a class="sourceLine" id="cb6-20" title="20">            <span class="co">/* wait until its left and upper cell is filled   */</span></a>
+<a class="sourceLine" id="cb6-21" title="21">            <span class="cf">while</span> (C[i][j-<span class="dv">1</span>] == EMPTY || C[i-<span class="dv">1</span>][j] == EMPTY);</a>
+<a class="sourceLine" id="cb6-22" title="22"></a>
+<a class="sourceLine" id="cb6-23" title="23">            <span class="co">/* calculate three possible directions,</span></a>
+<a class="sourceLine" id="cb6-24" title="24"><span class="co">               choose one with the biggest score    */</span></a>
+<a class="sourceLine" id="cb6-25" title="25">            ...</a>
+<a class="sourceLine" id="cb6-26" title="26">        }</a>
+<a class="sourceLine" id="cb6-27" title="27">}</a></code></pre></div>
+<p>Hasil penghitungan waktu eksekusi untuk skema antidiagonal menunjukkan <em>speedup</em> sampai 1.44 kali lipat dibanding dengan algoritme sekuensial. Efisiensi yang didapat pada skema ini hanya sebesar 36% untuk jumlah <em>thread</em> 4, jauh di bawah dua skema lainnya. Hasil lengkapnya dapat dilihat pada Tabel .</p>
+<table>
+<caption>Waktu eksekusi PA paralel skema antidiagonal dengan 4 <em>thread</em>.</caption>
+<thead>
+<tr class="header">
+<th>Panjang sekuens (bp)</th>
+<th style="text-align: center;">Waktu sekuensial (s)</th>
+<th style="text-align: center;">Waktu paralel (s)</th>
+<th style="text-align: center;"><em>Speedup</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1000</td>
+<td style="text-align: center;">0.017</td>
+<td style="text-align: center;">0.013</td>
+<td style="text-align: center;">1.28</td>
+</tr>
+<tr class="even">
+<td>2000</td>
+<td style="text-align: center;">0.052</td>
+<td style="text-align: center;">0.037</td>
+<td style="text-align: center;">1.43</td>
+</tr>
+<tr class="odd">
+<td>4000</td>
+<td style="text-align: center;">0.203</td>
+<td style="text-align: center;">0.145</td>
+<td style="text-align: center;">1.40</td>
+</tr>
+<tr class="even">
+<td>8000</td>
+<td style="text-align: center;">0.815</td>
+<td style="text-align: center;">0.563</td>
+<td style="text-align: center;">1.45</td>
+</tr>
+<tr class="odd">
+<td>16000</td>
+<td style="text-align: center;">3.250</td>
+<td style="text-align: center;">2.255</td>
+<td style="text-align: center;">1.44</td>
+</tr>
+</tbody>
+</table>
+<h2 id="skema-partisi-rowwise-lebih-baik">Skema partisi <em>rowwise</em> lebih baik?</h2>
+<p>Terlihat bahwa kinerja skema <em>rowwise</em> lebih baik daripada <em>blocked columnwise</em> dengan efisiensi 80% dan 75% berturut-turut pada 4 <em>thread</em>. Hasil tersebut di luar dugaan, karena skema <em>rowwise</em> memerlukan pengecekan dependensi data antar-<em>thread</em> yang lebih banyak. Hal ini disebabkan karena implementasi dilakukan pada arsitektur <em>shared memory</em>, sehingga waktu komunikasi perpindahan data dapat diabaikan karena tiap <em>thread</em> mengakses memori yang sama. Hasilnya akan jauh berbeda jika diimplementasikan pada arsitektur <em>distributed memory</em>. Selain itu, algoritme <em>blocked columnwise</em> di atas dinilai belum optimal, karena pengecekan dependensi data terjadi pada setiap iterasi. Untuk mengatasi hal tersebut, pembagian data perlu dilakukan secara manual tanpa bantuan OpenMP.</p>
+<p>Hasil yang berbeda didapatkan pada skema antidiagonal yang menghasilkan kinerja terburuk, yaitu efisiensi 36% pada 4 <em>thread</em>. Hasil tersebut disebabkan karena pola akses memori yang nonlinier, sehingga banyak terjadi <em>cache miss</em>.</p>
+<h2 id="perbaikan-skema-partisi-blocked-columnwise">Perbaikan skema partisi <em>blocked columnwise</em></h2>
+<h3 id="pembagian-looping-manual">Pembagian <em>looping</em> manual</h3>
+<p>Perbaikan pertama adalah pembagian <em>looping</em> secara manual tanpa bantuan <em>construct</em> <code>for</code> dari OpenMP. Hal ini disebabkan karena <em>construct</em> tersebut walaupun memudahkan tetapi kurang fleksibel untuk kasus tertentu. Pengecekan dependensi data akan dilakukan sekali per baris oleh tiap <em>thread</em>, sehingga diharapkan dapat meningkatkan kinerja. Berikut potongan kode yang telah diubah dengan pembagian <em>looping</em> secara manual.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><a class="sourceLine" id="cb7-1" title="1"><span class="pp">#pragma omp parallel private(i,j,diag,left,up)</span></a>
+<a class="sourceLine" id="cb7-2" title="2">{</a>
+<a class="sourceLine" id="cb7-3" title="3">    <span class="co">/* manual worksharing setup */</span></a>
+<a class="sourceLine" id="cb7-4" title="4">    <span class="dt">int</span> id     = omp_get_thread_num();</a>
+<a class="sourceLine" id="cb7-5" title="5">    <span class="dt">int</span> nthrds = omp_get_num_threads();</a>
+<a class="sourceLine" id="cb7-6" title="6">    <span class="dt">int</span> chunk  = n/nthrds;</a>
+<a class="sourceLine" id="cb7-7" title="7">    <span class="dt">int</span> jfirst = chunk*id + <span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb7-8" title="8">    <span class="dt">int</span> jlast  = (id &lt; np-<span class="dv">1</span>)? chunk*(id+<span class="dv">1</span>) : n;</a>
+<a class="sourceLine" id="cb7-9" title="9"></a>
+<a class="sourceLine" id="cb7-10" title="10">    <span class="cf">for</span> (i = <span class="dv">1</span>; i &lt;= m; i++) {</a>
+<a class="sourceLine" id="cb7-11" title="11"></a>
+<a class="sourceLine" id="cb7-12" title="12">        <span class="co">/* wait until leftmost cell is filled   */</span></a>
+<a class="sourceLine" id="cb7-13" title="13">        <span class="cf">while</span> (C[i][jfirst-<span class="dv">1</span>] == EMPTY);</a>
+<a class="sourceLine" id="cb7-14" title="14"></a>
+<a class="sourceLine" id="cb7-15" title="15">        <span class="cf">for</span> (j = jfirst; j &lt;= jlast; j++) {</a>
+<a class="sourceLine" id="cb7-16" title="16">            <span class="co">/* calculate three possible directions,</span></a>
+<a class="sourceLine" id="cb7-17" title="17"><span class="co">               choose one with the biggest score    */</span></a>
+<a class="sourceLine" id="cb7-18" title="18">            ...</a>
+<a class="sourceLine" id="cb7-19" title="19">        }</a>
+<a class="sourceLine" id="cb7-20" title="20">    }</a>
+<a class="sourceLine" id="cb7-21" title="21">}</a></code></pre></div>
+<p>Tabel  menunjukkan hasil penghitungan waktu eksekusi untuk skema <em>blocked columnwise</em> dengan <em>looping</em> manual yang mencapai <em>speedup</em> sampai 3.16 kali lipat dibanding dengan algoritme sekuensial. Efisiensi yang didapat dengan <em>looping</em> manual meningkat menjadi sebesar 79% untuk jumlah <em>thread</em> 4, hampir menyamai skema <em>rowwise</em>. Capaian ini akan diperbaiki lebih lanjut dengan teknik <em>loop unrolling</em> dengan harapan <em>speedup</em> yang didapat lebih maksimal.</p>
+<table>
+<caption>Waktu eksekusi PA paralel skema <em>blocked columnwise</em> <em>looping</em> manual dengan 4 <em>thread</em>.</caption>
+<thead>
+<tr class="header">
+<th>Panjang sekuens (bp)</th>
+<th style="text-align: center;">Waktu sekuensial (s)</th>
+<th style="text-align: center;">Waktu paralel (s)</th>
+<th style="text-align: center;"><em>Speedup</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1000</td>
+<td style="text-align: center;">0.017</td>
+<td style="text-align: center;">0.008</td>
+<td style="text-align: center;">2.18</td>
+</tr>
+<tr class="even">
+<td>2000</td>
+<td style="text-align: center;">0.052</td>
+<td style="text-align: center;">0.018</td>
+<td style="text-align: center;">2.91</td>
+</tr>
+<tr class="odd">
+<td>4000</td>
+<td style="text-align: center;">0.203</td>
+<td style="text-align: center;">0.065</td>
+<td style="text-align: center;">3.15</td>
+</tr>
+<tr class="even">
+<td>8000</td>
+<td style="text-align: center;">0.815</td>
+<td style="text-align: center;">0.259</td>
+<td style="text-align: center;">3.15</td>
+</tr>
+<tr class="odd">
+<td>16000</td>
+<td style="text-align: center;">3.250</td>
+<td style="text-align: center;">1.027</td>
+<td style="text-align: center;">3.16</td>
+</tr>
+</tbody>
+</table>
+<h3 id="loop-unrolling"><em>Loop unrolling</em></h3>
+<p>Perbaikan berikutnya adalah dengan menggunakan teknik <em>loop unrolling</em>, yaitu menggabungkan beberapa iterasi menjadi satu. Teknik ini bertujuan untuk mengurangi jumlah instruksi dan meningkatkan <em>cache locality</em> <span class="citation" data-cites="loveman1977 sedgewick1978">(Loveman 1977; Sedgewick 1978)</span>. <em>Looping</em> untuk setiap baris akan di-<em>unroll</em> dengan faktor dua, yaitu iterasi untuk dua baris akan digabung menjadi satu. Hal ini dilakukan dengan membuat dua salinan <em>looping</em> untuk <span class="math inline">\(C_{i,j}\)</span> dan <span class="math inline">\(C_{(i+1),j}\)</span> dengan <em>increment</em> sebesar 2 untuk tiap iterasi.</p>
+<p>Berikut potongan kode yang telah diubah menggunakan <em>loop unrolling</em> dengan faktor dua. Terdapat pengecekan yang ditambahkan di tengah <em>looping</em> agar <em>looping</em> berhenti jika sudah mencapai baris terakhir. Pengecekan tersebut merupakan antisipasi jika jumlah baris <span class="math inline">\(m\)</span> tidak tepat habis dibagi dengan faktor <em>unroll</em>.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><a class="sourceLine" id="cb8-1" title="1"><span class="pp">#pragma omp parallel private(i,j,diag,left,up)</span></a>
+<a class="sourceLine" id="cb8-2" title="2">{</a>
+<a class="sourceLine" id="cb8-3" title="3">    <span class="co">/* manual worksharing setup */</span></a>
+<a class="sourceLine" id="cb8-4" title="4">    ...</a>
+<a class="sourceLine" id="cb8-5" title="5"></a>
+<a class="sourceLine" id="cb8-6" title="6">    <span class="cf">for</span> (i = <span class="dv">1</span>; i &lt;= m; i += <span class="dv">2</span>) {</a>
+<a class="sourceLine" id="cb8-7" title="7"></a>
+<a class="sourceLine" id="cb8-8" title="8">        <span class="co">/* wait until leftmost cell is filled   */</span></a>
+<a class="sourceLine" id="cb8-9" title="9">        <span class="cf">while</span> (C[i][jfirst-<span class="dv">1</span>] == EMPTY);</a>
+<a class="sourceLine" id="cb8-10" title="10"></a>
+<a class="sourceLine" id="cb8-11" title="11">        <span class="cf">for</span> (j = jfirst; j &lt;= jlast; j++) {</a>
+<a class="sourceLine" id="cb8-12" title="12">            <span class="co">/* calculate three possible directions,</span></a>
+<a class="sourceLine" id="cb8-13" title="13"><span class="co">               choose one with the biggest score for C[i][j]   */</span></a>
+<a class="sourceLine" id="cb8-14" title="14">            ...</a>
+<a class="sourceLine" id="cb8-15" title="15"></a>
+<a class="sourceLine" id="cb8-16" title="16">            <span class="cf">if</span> (i == m) <span class="cf">break</span>;</a>
+<a class="sourceLine" id="cb8-17" title="17"></a>
+<a class="sourceLine" id="cb8-18" title="18">            <span class="co">/* calculate three possible directions,</span></a>
+<a class="sourceLine" id="cb8-19" title="19"><span class="co">               choose one with the biggest score for C[i+1][j] */</span></a>
+<a class="sourceLine" id="cb8-20" title="20">            ...</a>
+<a class="sourceLine" id="cb8-21" title="21">        }</a>
+<a class="sourceLine" id="cb8-22" title="22">    }</a>
+<a class="sourceLine" id="cb8-23" title="23">}</a></code></pre></div>
+<p>Tabel  menunjukkan hasil penghitungan waktu eksekusi untuk skema <em>blocked columnwise</em> dengan <em>looping</em> manual dan <em>loop unrolling</em> faktor dua yang memberikan <em>speedup</em> sampai 3.54 kali lipat dibanding dengan algoritme sekuensial. Efisiensi yang didapat meningkat menjadi sebesar 89% untuk jumlah <em>thread</em> 4.</p>
+<table>
+<caption>Waktu eksekusi PA paralel skema <em>blocked columnwise</em> <em>looping</em> manual dan <em>loop unrolling</em> dengan 4 <em>thread</em>.</caption>
+<thead>
+<tr class="header">
+<th>Panjang sekuens (bp)</th>
+<th style="text-align: center;">Waktu sekuensial (s)</th>
+<th style="text-align: center;">Waktu paralel (s)</th>
+<th style="text-align: center;"><em>Speedup</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1000</td>
+<td style="text-align: center;">0.017</td>
+<td style="text-align: center;">0.006</td>
+<td style="text-align: center;">2.56</td>
+</tr>
+<tr class="even">
+<td>2000</td>
+<td style="text-align: center;">0.052</td>
+<td style="text-align: center;">0.017</td>
+<td style="text-align: center;">3.16</td>
+</tr>
+<tr class="odd">
+<td>4000</td>
+<td style="text-align: center;">0.203</td>
+<td style="text-align: center;">0.058</td>
+<td style="text-align: center;">3.51</td>
+</tr>
+<tr class="even">
+<td>8000</td>
+<td style="text-align: center;">0.815</td>
+<td style="text-align: center;">0.231</td>
+<td style="text-align: center;">3.53</td>
+</tr>
+<tr class="odd">
+<td>16000</td>
+<td style="text-align: center;">3.250</td>
+<td style="text-align: center;">0.918</td>
+<td style="text-align: center;">3.54</td>
+</tr>
+</tbody>
+</table>
+<h2 id="perbandingan-kinerja">Perbandingan kinerja</h2>
+<p>Skema <em>blocked columnwise</em> yang telah diperbaiki menghasilkan kinerja yang lebih baik dibandingkan skema <em>rowwise</em>, dengan efisiensi mencapai 89% pada jumlah <em>thread</em> 4. Perbandingan kinerja skema partisi data yang telah diuji dapat dilihat pada Gambar .</p>
+<figure>
+<img src="efisiensi.png" alt="Perbandingan efisiensi antar skema partisi pada jumlah thread 4." /><figcaption>Perbandingan efisiensi antar skema partisi pada jumlah <em>thread</em> 4.</figcaption>
+</figure>
+<h1 id="simpulan-dan-saran">Simpulan dan Saran</h1>
+<p>Algoritme PA dengan skema partisi <em>blocked columnwise</em> yang telah diperbaiki menghasilkan kinerja tertinggi (efisiensi 89%). Di luar perkiraan, skema partisi <em>rowwise</em> menghasilkan kinerja yang cukup bagus (efisiensi 80%) pada arsitektur <em>shared memory</em>.</p>
+<p>Penelitian ini menghasilkan algoritme PA dengan <em>fine-grain parallelism</em> yang dapat dimanfaatkan lebih lanjut sebagai komponen untuk mengembangkan algoritme MSA paralel pada arsitektur hibrida <em>shared–distributed memory</em> dengan memakai OpenMP–MPI.</p>
+<h1 id="ucapan-terima-kasih">Ucapan Terima Kasih</h1>
+<p>Penelitian ini terlaksana berkat bantuan dana dari Kerjasama Kemitraan Penelitian dan Pengembangan Pertanian Nasional (KKP3N) Kementerian Pertanian Indonesia tahun 2013. Ucapan terima kasih penulis ucapkan kepada Dr Wisnu Ananta Kusuma yang telah mengikutsertakan penulis dalam kerjasama penelitian tersebut.</p>
+<h1 id="daftar-pustaka">Daftar Pustaka</h1>
+<!-- \input{pa-partition.ref.tex} -->
+<div id="refs" class="references" role="doc-bibliography">
+<div id="ref-chaichoompu2006">
+<p>Chaichoompu K, Kittitornkun S, Tongsima S. 2006. MT-ClustalW: multithreading multiple sequence alignment. Di dalam: <em>Parallel and Distributed Processing Symposium, 2006. IPDPS 2006. 20th International</em>. IEEE. hlm. 1–8.</p>
+</div>
+<div id="ref-cohen2004">
+<p>Cohen J. 2004. Bioinformatics—an introduction for computer scientists. <em>ACM Computing Surveys (CSUR)</em>. 36(2):122–158.</p>
+</div>
+<div id="ref-cormen2009">
+<p>Cormen TH, Leiserson CE, Rivest RL, Stein C. 2009. <em>Introduction to Algorithms</em>. Ed ke-3. MIT Press.</p>
+</div>
+<div id="ref-dagum1998">
+<p>Dagum L, Menon R. 1998. OpenMP: an industry standard API for shared-memory programming. <em>Computational Science &amp; Engineering, IEEE</em>. 5(1):46–55.</p>
+</div>
+<div id="ref-edgar2004">
+<p>Edgar RC. 2004. MUSCLE: multiple sequence alignment with high accuracy and high throughput. <em>Nucleic Acids Research</em>. 32(5):1792–1797.</p>
+</div>
+<div id="ref-hughey1996">
+<p>Hughey R. 1996. Parallel hardware for sequence comparison and alignment. <em>Computer Applications in the Biosciences: CABIOS</em>. 12(6):473–479.</p>
+</div>
+<div id="ref-katoh2002">
+<p>Katoh K, Misawa K, Kuma K, Miyata T. 2002. MAFFT: a novel method for rapid multiple sequence alignment based on fast Fourier transform. <em>Nucleic Acids Research</em>. 30(14):3059–3066.</p>
+</div>
+<div id="ref-katoh2010">
+<p>Katoh K, Toh H. 2010. Parallelization of the MAFFT multiple sequence alignment program. <em>Bioinformatics</em>. 26(15):1899–1900.</p>
+</div>
+<div id="ref-kleinjung2002">
+<p>Kleinjung J, Douglas N, Heringa J. 2002. Parallelized multiple alignment. <em>Bioinformatics</em>. 18(9):1270–1271.</p>
+</div>
+<div id="ref-lamport1979">
+<p>Lamport L. 1979. How to make a multiprocessor computer that correctly executes multiprocess programs. <em>Computers, IEEE Transactions on</em>. 100(9):690–691.</p>
+</div>
+<div id="ref-li2012">
+<p>Li J, Ranka S, Sahni S. 2012. Pairwise sequence alignment for very long sequences on GPUs. Di dalam: <em>IEEE International Conference on Computational Advances in Bio and Medical Sciences</em>. NIH Public Access.</p>
+</div>
+<div id="ref-li2003">
+<p>Li K-B. 2003. ClustalW-MPI: ClustalW analysis using distributed and parallel computing. <em>Bioinformatics</em>. 19(12):1585–1586.</p>
+</div>
+<div id="ref-liu2012">
+<p>Liu L, Li Y, Li S, Hu N, He Y, Pong R, Lin D, Lu L, Law M. 2012. Comparison of next-generation sequencing systems. <em>BioMed Research International</em>. 2012.</p>
+</div>
+<div id="ref-liu2003">
+<p>Liu W, Schmidt B. 2003. Parallel design pattern for computational biology and scientific computing applications. Di dalam: <em>Cluster Computing, 2003. Proceedings. 2003 IEEE International Conference on</em>. IEEE. hlm. 456–459.</p>
+</div>
+<div id="ref-liu2013">
+<p>Liu Y, Wirawan A, Schmidt B. 2013. CUDASW++ 3.0: accelerating Smith-Waterman protein database search by coupling CPU and GPU SIMD instructions. <em>BMC Bioinformatics</em>. 14(1):117.</p>
+</div>
+<div id="ref-loveman1977">
+<p>Loveman DB. 1977. Program improvement by source-to-source transformation. <em>Journal of the ACM (JACM)</em>. 24(1):121–145.</p>
+</div>
+<div id="ref-martins2001">
+<p>Martins WS, Cuvillo J del, Cui W, Gao GR. 2001. Whole genome alignment using a multithreaded parallel implementation. Di dalam: <em>Symposium on Computer Architecture and High Performance Computing</em>. hlm. 1–8.</p>
+</div>
+<div id="ref-needleman1970">
+<p>Needleman SB, Wunsch CD. 1970. A general method applicable to the search for similarities in the amino acid sequence of two proteins. <em>Journal of Molecular Biology</em>. 48(3):443–453.</p>
+</div>
+<div id="ref-notredame2000">
+<p>Notredame C, Higgins DG, Heringa J. 2000. T-Coffee: A novel method for fast and accurate multiple sequence alignment. <em>Journal of Molecular Biology</em>. 302(1):205–217.</p>
+</div>
+<div id="ref-rognes2001">
+<p>Rognes T. 2001. ParAlign: a parallel sequence alignment algorithm for rapid and sensitive database searches. <em>Nucleic Acids Research</em>. 29(7):1647–1652.</p>
+</div>
+<div id="ref-rognes2000">
+<p>Rognes T, Seeberg E. 2000. Six-fold speed-up of Smith–Waterman sequence database searches using parallel processing on common microprocessors. <em>Bioinformatics</em>. 16(8):699–706.</p>
+</div>
+<div id="ref-sedgewick1978">
+<p>Sedgewick R. 1978. Implementing quicksort programs. <em>Communications of the ACM</em>. 21(10):847–857.</p>
+</div>
+<div id="ref-smith1981">
+<p>Smith TF, Waterman MS. 1981. Identification of common molecular subsequences. <em>Journal of Molecular Biology</em>. 147(1):195–197.</p>
+</div>
+<div id="ref-thompson1994">
+<p>Thompson JD, Higgins DG, Gibson TJ. 1994. CLUSTAL W: improving the sensitivity of progressive multiple sequence alignment through sequence weighting, position-specific gap penalties and weight matrix choice. <em>Nucleic Acids Research</em>. 22(22):4673–4680.</p>
+</div>
+<div id="ref-waterman1976">
+<p>Waterman MS, Smith TF, Beyer WA. 1976. Some biological sequence metrics. <em>Advances in Mathematics</em>. 20(3):367–387.</p>
+</div>
+</div>
+</body>
+</html>
