@@ -5,6 +5,7 @@ date            : 2014
 bibliography    : ref.bib
 csl             : ../ipb.csl
 papersize       : a4
+css             : https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/light.min.css
 header-includes :
 - \renewcommand{\contentsname}{Isi}
 - \renewcommand{\abstractname}{Abstrak}

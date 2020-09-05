@@ -4,6 +4,7 @@ author  : Institut Pertanian Bogor
 date    : 2020
 bibliography: ppki4.bib
 csl     : ../ipb.csl
+css     : https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/light.min.css
 ---
 
 # Contoh
