@@ -1,10 +1,10 @@
 # Citation Style Language untuk Format PPKI IPB
 
-Download CSL: [ipb.link/csl](https://auriza.github.io/csl-ipb/ipb.csl)
+Download CSL: [https://ipb.link/csl](https://auriza.github.io/csl-ipb/ipb.csl)
 
 ![CSL dalam ekosistem penulisan pustaka](csl.png)
 
-## *Best practice* penulisan metadata pustaka
+## Penyesuaian metadata pustaka
 
 | Komponen              | Penulisan                                                                |
 |:----------------------|:-------------------------------------------------------------------------|
