@@ -1,6 +1,6 @@
 # Citation Style Language untuk Format PPKI IPB
 
-Download CSL: [ipb.link/csl](ipb.csl)
+Download CSL: [ipb.link/csl](https://auriza.github.io/csl-ipb/ipb.csl)
 
 ![CSL dalam ekosistem penulisan pustaka](csl.png)
 
