@@ -49,7 +49,7 @@
       <term name="forthcoming">siap terbit</term>
       <term name="from">dari</term>
       <term name="ibid">ibid.</term>
-      <term name="in">Di dalam</term>
+      <term name="in">di dalam</term>
       <term name="in press">di dalam press</term>
       <term name="internet">internet</term>
       <term name="interview">wawancara</term>
@@ -490,7 +490,7 @@
           <else-if type="chapter paper-conference entry-dictionary entry-encyclopedia" match="any">
             <group prefix=" " delimiter=" " suffix=".">
               <group delimiter=" ">
-                <text term="in" suffix=":"/>
+                <text term="in" suffix=":" text-case="capitalize-first"/>
                 <text macro="editor" suffix="."/>
                 <text variable="container-title" font-style="italic" suffix="."/>
                 <choose>
@@ -504,12 +504,18 @@
               <group suffix="." delimiter=". ">
                 <choose>
                   <if type="paper-conference">
-                    <text variable="event" suffix=";" font-style="italic"/>
-                    <text variable="event-place" suffix="."/>
+                    <group delimiter="; ">
+                      <text variable="event" font-style="italic"/>
+                      <date variable="event-date" delimiter=" ">
+                        <date-part name="year" suffix=" "/>
+                        <date-part name="month" form="short" suffix=" "/>
+                        <date-part name="day"/>
+                      </date>
+                      <text variable="event-place"/>
+                    </group>
                   </if>
                 </choose>
                 <text macro="publisher"/>
-                <text prefix=" " macro="collection"/>
                 <text macro="pages"/>
               </group>
             </group>

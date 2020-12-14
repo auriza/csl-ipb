@@ -2,9 +2,20 @@
 
 Download CSL: [https://ipb.link/csl](https://auriza.github.io/csl-ipb/ipb.csl)
 
-![CSL dalam ekosistem penulisan pustaka](csl.png)
 
-## Penyesuaian metadata pustaka pada Zotero
+## Panduan instalasi
+
+### Mendeley
+
+- Pada Mendeley Desktop, masuk ke menu "View", "Citation Style", "More Styles..."
+- Masuk ke tab "Get More Styles", "Download Style", isikan link [https://ipb.link/csl](https://ipb.link/csl), klik "Download"
+
+### Zotero
+
+- Unduh [https://ipb.link/csl](https://ipb.link/csl), simpan dengan nama file `ipb.csl`.
+- Masuk ke menu "Edit", "Preferences", "Cite", "Styles", klik tombol "+", dan pilih file `ipb.csl` yang sudah diunduh
+
+## Penyesuaian metadata pustaka (Zotero)
 
 | Komponen                  | Penulisan                                                             |
 |:--------------------------|:----------------------------------------------------------------------|
@@ -14,7 +25,7 @@ Download CSL: [https://ipb.link/csl](https://auriza.github.io/csl-ipb/ipb.csl)
 | Judul cetak miring        | `<i>`*Oryza sativa*`</i>`                                             |
 | **Artikel jurnal**        |                                                                       |
 | - singkatan jurnal        | pada atribut `journal abbr`                                           |
-| - penulis tidak ada       | pada atribut `short title`: kata pertama dari judul                   |
+| - penulis tidak ada       | pada atribut `short title` isikan kata pertama dari judul             |
 | - penulis organisasi      | langsung singkatannya saja, belum didukung 🔴                          |
 | - jenis artikel: editorial, ulasan, … | pada atribut `extra`/`note`                               |
 | - sisipan, edisi khusus   | pada atribut `issue`                                                  |
@@ -27,17 +38,27 @@ Download CSL: [https://ipb.link/csl](https://auriza.github.io/csl-ipb/ipb.csl)
 | - buku dengan editor      | pada atribut `editor`                                                 |
 | - buku dengan penerjemah  | pada atribut `translator`                                             |
 | - penulis organisasi      | langsung singkatannya saja, belum didukung 🔴                          |
-| - buku berseri judul volume sama  | pada atribut `volume` |
+| - buku berseri judul volume sama  | pada atribut `volume`                                         |
 | - buku berseri judul volume beda  | pada atribut `volume` tambahkan judul volumenya (nomor: judul)|
-| - artikel dalam buku      | gunakan tipe `book section` |
+| - artikel dalam buku      | gunakan tipe `book section`                                           |
+| **Prosiding**             |                                                                       |
+| - tanggal konferensi      | pada atribut `extra`/`note` tambahkan isian `Event Date: YYYY-MM-DD/YYYY-MM-DD` |
+| - tempat konferensi       | hapus atribut `place` dan pada atribut `extra`/`note` tambahkan isian `Event Place:` dan `Publisher Place:` |
 
 
 
+## Pengujian
 
-## Contoh Keluaran
+Masukan:
 
-Hasil uji coba: [HTML](https://auriza.github.io/csl-ipb/test/ppki4.html), [PDF](https://auriza.github.io/csl-ipb/test/ppki4.pdf)
+- daftar pustaka: [YAML](https://auriza.github.io/csl-ipb/test/ppki4.yaml), [BibTeX](https://auriza.github.io/csl-ipb/test/ppki4.bib)
+- halaman uji: [Markdown](https://auriza.github.io/csl-ipb/test/ppki4.md)
 
-Contoh paper: [HTML](https://auriza.github.io/csl-ipb/tesis/paper.html), [PDF](https://auriza.github.io/csl-ipb/tesis/paper.pdf)
+Keluaran: [HTML](https://auriza.github.io/csl-ipb/test/ppki4.html), [PDF](https://auriza.github.io/csl-ipb/test/ppki4.pdf)
 
-Catatan: untuk kompilasi dengan Pandoc, ekspor koleksi dari Zotero dengan format BibTex, bukan BibLaTeX.
+<!-- Contoh paper: [HTML](https://auriza.github.io/csl-ipb/tesis/paper.html), [PDF](https://auriza.github.io/csl-ipb/tesis/paper.pdf) -->
+
+Pengujian dilakukan dengan mengekspor koleksi pustaka dari Zotero dengan format "Better CSL YAML"
+dan mengkompilasi halaman uji dengan `pandoc`.
+
+![CSL dalam ekosistem penulisan pustaka](csl.png)

@@ -3,7 +3,7 @@ title   : Pedoman Penulisan Karya Ilmiah
 author  : Institut Pertanian Bogor
 date    : 2020
 link-citations: true
-bibliography: ppki4.bib
+bibliography: ppki4.yaml
 csl     : ../ipb.csl
 css     : https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/light.min.css
 ---
@@ -40,6 +40,10 @@ css     : https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/light.min.cs
 - Buku berseri dengan judul volume berbeda-beda: [@phillips_qualitative_2002]
 - Artikel dalam buku: [@buchori_insect_2017]
 - Artikel dalam buku berseri dengan judul volume berbeda-beda: [@wahyuni_impact_2007]
+
+## Prosiding
+
+- Artikel dalam prosiding: [@nurtjahya_status_2011]
 
 
 # Daftar Pustaka
