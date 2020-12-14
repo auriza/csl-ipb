@@ -1,5 +1,20 @@
 ---
 references:
+- id: amelia_pengembangan_2017
+  author:
+    - family: Amelia
+      given: J.R.
+  event-place: Bogor
+  genre: disertasi
+  issued:
+    - year: 2017
+  publisher: Institut Pertanian Bogor
+  publisher-place: Bogor
+  title: >-
+    Pengembangan teknologi pengelolaan limbah cair dan limbah padat secara
+    terintegrasi untuk mendukung industri kelapa sawit berkelanjutan
+  type: thesis
+
 - id: baez_droughts_2017
   accessed:
     - year: 2019
@@ -139,6 +154,21 @@ references:
   publisher-place: New York (NY)
   title: 'Understanding Human Ecology: A Systems Approach to Sustainability'
   type: book
+
+- id: febrizal_pengembangan_2017
+  author:
+    - family: Febrizal
+      given: R.
+  event-place: Bogor
+  genre: skripsi
+  issued:
+    - year: 2017
+  publisher: Institut Pertanian Bogor
+  publisher-place: Bogor
+  title: >-
+    Pengembangan metode pengukuran tingkat kematangan buah jambu kristal
+    menggunakan pengolahan citra
+  type: thesis
 
 - id: gunawan_status_1997
   author:
@@ -394,6 +424,46 @@ references:
   URL: 'https://linkinghub.elsevier.com/retrieve/pii/S0006320716310795'
   volume: '206'
 
+- id: leiwakabessy_disease_2017
+  accessed:
+    - year: 2017
+      month: 11
+      day: 29
+  author:
+    - family: Leiwakabessy
+      given: Maxmilyand
+    - family: Nurulita
+      given: Sari
+    - family: Hidayat
+      given: Sri H.
+  container-title: The Future of Tropical Agriculture
+  editor:
+    - family: Efendi
+      given: D.
+    - family: Maharijaya
+      given: A.
+  event: Proceedings of the International Seminar on Tropical Horticulture 2016
+  event-date:
+    - year: 2016
+      month: 11
+      day: 28
+    - year: 2016
+      month: 11
+      day: 29
+  event-place: 'Bogor, Indonesia'
+  issued:
+    - year: 2017
+      month: 5
+  page: 37-45
+  publisher: PKHT IPB
+  publisher-place: Bogor
+  title: >-
+    Disease incidence and molecular analysis of banana bunchy top virus in
+    Bogor, West Java
+  type: paper-conference
+  URL: >-
+    https://pkht.ipb.ac.id/wp-content/uploads/2017/08/Upload-Proceeding-ISTH-2016.pdf
+
 - id: manuwoto_tantangan_2015
   author:
     - family: Manuwoto
@@ -484,6 +554,19 @@ references:
     Bangka
   type: paper-conference
 
+- id: palupi_faktor_2016
+  author:
+    - family: Palupi
+      given: M.P.
+  event-place: Bogor
+  genre: tesis
+  issued:
+    - year: 2016
+  publisher: Institut Pertanian Bogor
+  publisher-place: Bogor
+  title: Faktor risiko obesitas sentral pada orang dewasa di Indonesia
+  type: thesis
+
 - id: pelczar_dasar-dasar_1986
   author:
     - family: Pelczar
@@ -523,6 +606,30 @@ references:
   title: Qualitative Research Methods Series
   type: book
   volume: '50: Discourse Analysis: Investigating Processes of Social Construction'
+
+- id: rahayu_microbial_2010
+  author:
+    - family: Rahayu
+      given: G.
+  container-title: >-
+    Book of Abstracts. Harnessing the Power of Microbes for Better Food,
+    Agro-Industry, Health, and Environment
+  event: International Seminar of Indonesian Society for Microbiology
+  event-date:
+    - year: 2010
+      month: 10
+      day: 4
+    - year: 2010
+      month: 10
+      day: 7
+  event-place: Bogor
+  issued:
+    - year: 2010
+  page: '9'
+  publisher: Permi Cabang Bogor
+  publisher-place: Bogor
+  title: Microbial aspects of agarwood production in Indonesia
+  type: paper-conference
 
 - id: rifai_penggodokan_1992
   author:
@@ -573,7 +680,6 @@ references:
   source: DOI.org (Crossref)
   title: 'Seaweed farming, property rights, and inclusive development in coastal areas'
   type: article-journal
-  URL: 'https://linkinghub.elsevier.com/retrieve/pii/S0964569117307664'
 
 - id: sscccp_recommended_1976
   author:

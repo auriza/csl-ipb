@@ -43,7 +43,11 @@ Download CSL: [https://ipb.link/csl](https://auriza.github.io/csl-ipb/ipb.csl)
 | - artikel dalam buku      | gunakan tipe `book section`                                           |
 | **Prosiding**             |                                                                       |
 | - tanggal konferensi      | pada atribut `extra`/`note` tambahkan isian `Event Date: YYYY-MM-DD/YYYY-MM-DD` |
-| - tempat konferensi       | hapus atribut `place` dan pada atribut `extra`/`note` tambahkan isian `Event Place:` dan `Publisher Place:` |
+| - tempat konferensi       | kosongkan atribut `place` dan pada atribut `extra`/`note` tambahkan isian `Event Place:` dan `Publisher Place:` |
+| - artikel dari internet   | pada atribut `URL` dan `accessed`                                      |
+| - nomor abstrak           | belum didukung 🔴                                                      |
+| **Tesis**                 |                                                                       |
+| - jenis: skripsi, tesis, disertasi | pada atribut `type`                                          |
 
 
 

@@ -8,7 +8,6 @@ csl     : ../ipb.csl
 css     : https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/light.min.css
 ---
 
-
 ## Jurnal Ilmiah
 
 - Penulis satu orang: [@kolopaking_migrasi_2016; @syuaib_anthropometric_2015]
@@ -44,7 +43,14 @@ css     : https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/light.min.cs
 ## Prosiding
 
 - Artikel dalam prosiding: [@nurtjahya_status_2011]
+- Artikel dalam prosiding diunduh dari internet: [@leiwakabessy_disease_2017]
+- Abstrak dalam prosiding: [@rahayu_microbial_2010]
 
+## Tesis
+
+- Skripsi: [@febrizal_pengembangan_2017]
+- Tesis: [@palupi_faktor_2016]
+- Disertasi: [@amelia_pengembangan_2017]
 
 # Daftar Pustaka
 
